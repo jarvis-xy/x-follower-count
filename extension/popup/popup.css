@@ -163,6 +163,7 @@ fieldset:disabled .seg label { cursor: default; }
 }
 .legend .xfc-badge { margin: 0; font-family: inherit; }
 .legend[hidden] { display: none; }
+.row-label .xfc-nofb { height: 16px; margin-left: 2px; padding: 0 4px; font-size: 11px; line-height: 16px; font-family: inherit; vertical-align: 1px; display: inline-flex; }
 
 footer {
   border-top: 1px solid var(--line);

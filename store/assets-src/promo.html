@@ -55,13 +55,13 @@ const card = (name, badge, c, handle, style) =>
 let html = `<div class="icon">${GLYPH}</div>`;
 if (size === 'small') {
   html += `<div class="glow" style="width:260px;height:260px;right:-70px;top:-90px"></div>
-    <h1>X 粉丝数显示</h1><p class="sub">在用户名旁直接看到粉丝数</p>
+    <h1>X Follower Count</h1><p class="sub">在用户名旁直接看到粉丝数</p>
     ${card('林小夕', '粉丝 17.4万', ['#ffb88c', '#de6262'], '', 'top:134px')}
     ${card('老周聊出海', '粉丝 120.6万', ['#f6d365', '#fda085'], '', 'top:192px; left:118px')}`;
 } else {
   html += `<div class="glow" style="width:620px;height:620px;right:-120px;top:-200px"></div>
     <div class="glow" style="width:300px;height:300px;right:420px;bottom:-190px"></div>
-    <h1>X 粉丝数显示</h1><p class="sub">在用户名旁直接看到每个人的粉丝数</p>
+    <h1>X Follower Count</h1><p class="sub">在用户名旁直接看到每个人的粉丝数</p>
     ${card('林小夕', '粉丝 17.4万', ['#ffb88c', '#de6262'], '@linxiaoxi_ai', 'left:720px; top:112px')}
     ${card('Mia Chen', '粉丝 5.6万', ['#fbc2eb', '#a66cff'], '@miachen_vc', 'left:790px; top:232px')}
     ${card('晚安星球', '粉丝 7,806', ['#667eea', '#764ba2'], '@goodnight_star', 'left:700px; top:352px')}`;

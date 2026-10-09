@@ -1,5 +1,6 @@
 // Isolated-world content script: keeps the follower cache, reads settings,
-// and renders a "粉丝 17.4万" badge next to display names on x.com.
+// renders a "粉丝 17.4万" badge next to display names on x.com, and tags
+// people you follow who don't follow you back ("未回关") in user lists.
 (() => {
   'use strict';
 
@@ -9,12 +10,19 @@
   const EVT_RESET = 'xfc:reset';
   const CACHE_KEY = 'xfcCache';
   const MAX_ENTRIES = 10000;
-  const DEFAULTS = { enabled: true, showInTweets: true, showInLists: true, lang: 'zh', tierColors: false };
+  const DEFAULTS = {
+    enabled: true,
+    showInTweets: true,
+    showInLists: true,
+    lang: 'zh',
+    tierColors: false,
+    showNoFollowBack: true,
+  };
   // Tweet headers (incl. quoted tweets) and user rows (followers, following, likes, who-to-follow, search).
   const CONTAINERS = '[data-testid="User-Name"], [data-testid="UserCell"]';
   const AT_HANDLE_RE = /^@([A-Za-z0-9_]{1,15})$/;
   const HANDLE_RE = /^[A-Za-z0-9_]{1,15}$/;
-  const BIDI_RE = /[‎‏‪-‮⁦-⁩]/g;
+  const BIDI_RE = /[\u200e\u200f\u202a-\u202e\u2066-\u2069]/g;
 
   const users = new Map(); // lowercased handle -> { h, f, g, t }
   const dirty = new Set();
@@ -222,10 +230,59 @@
     return true;
   }
 
+  // After the @handle, in the same row X uses for its own "Follows you" tag.
+  function placeAfterHandle(c, handleNode, el) {
+    for (let n = handleNode.parentElement; n && n !== c; n = n.parentElement) {
+      if (isFlexRow(n)) {
+        n.appendChild(el);
+        return;
+      }
+    }
+    (handleNode.parentElement.closest('[dir]') || handleNode.parentElement).after(el);
+  }
+
+  // "未回关" = the cell's button says you follow them ("…-unfollow") and X shows
+  // no "Follows you" indicator. Both come from the cell itself, so the tag is
+  // right even for people seen before and flips the moment you (un)follow.
+  function syncFollowBack(c, found) {
+    let pill = c.querySelector('.xfc-nofb');
+    const show =
+      found &&
+      c.querySelector('[data-testid$="-unfollow"]') &&
+      !c.querySelector('[data-testid="userFollowIndicator"]');
+    if (!show) {
+      if (pill) pill.remove();
+      return;
+    }
+    if (pill && pill.dataset.xfcKey !== found.key) {
+      pill.remove();
+      pill = null;
+    }
+    if (!pill) {
+      pill = document.createElement('span');
+      pill.className = 'xfc-nofb';
+      pill.dataset.xfcKey = found.key;
+      placeAfterHandle(c, found.node, pill);
+    }
+    const en = settings.lang === 'en';
+    const text = en ? "Doesn't follow you" : '未回关';
+    if (pill.textContent !== text) {
+      pill.textContent = text;
+      pill.title = en ? "You follow them, but they don't follow you" : '你关注了 TA，但 TA 没有关注你';
+    }
+  }
+
   function processContainer(c) {
     const isCell = c.getAttribute('data-testid') === 'UserCell';
+    const badgeWanted = wanted(c, isCell);
+    const pillWanted = isCell && settings.enabled && settings.showNoFollowBack;
+    const found = badgeWanted || pillWanted ? findHandle(c) : null;
+    if (isCell) syncFollowBack(c, pillWanted ? found : null);
+    syncBadge(c, badgeWanted ? found : null);
+  }
+
+  function syncBadge(c, found) {
     let badge = c.querySelector('.xfc-badge');
-    const found = wanted(c, isCell) ? findHandle(c) : null;
     const rec = found && users.get(found.key);
     if (!rec) {
       if (badge) badge.remove();
@@ -271,16 +328,18 @@
   }
 
   // Leftovers from a previous instance (e.g. after the extension was reloaded).
-  for (const el of document.querySelectorAll('.xfc-badge')) el.remove();
+  for (const el of document.querySelectorAll('.xfc-badge, .xfc-nofb')) el.remove();
 
+  // data-testid changes in place when you click Follow / Following, which no
+  // childList record would report.
   new MutationObserver((records) => {
     for (const r of records) {
-      if (r.addedNodes.length) {
+      if (r.addedNodes.length || r.type === 'attributes') {
         scheduleRender();
         return;
       }
     }
-  }).observe(document, { childList: true, subtree: true }); // documentElement may not exist yet at document_start
+  }).observe(document, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-testid'] }); // documentElement may not exist yet at document_start
 
   load();
 })();

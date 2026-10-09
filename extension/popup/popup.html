@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>X 粉丝数显示</title>
+  <title>X Follower Count</title>
   <link rel="stylesheet" href="popup.css">
   <link rel="stylesheet" href="../src/content.css">
 </head>
@@ -11,7 +11,7 @@
   <header class="head">
     <img class="logo" src="../icons/icon48.png" alt="" width="32" height="32">
     <div class="head-text">
-      <h1>X 粉丝数显示</h1>
+      <h1>X Follower Count</h1>
       <p>在用户名旁直接看到粉丝数</p>
     </div>
     <span class="version" id="version"></span>
@@ -62,6 +62,12 @@
         <span class="xfc-badge xfc-tier-3">1万+</span>
         <span class="xfc-badge xfc-tier-4">10万+</span>
       </div>
+
+      <div class="group-title">关注关系</div>
+      <label class="row">
+        <span class="row-label">标出未回关的人<small>你关注了、但没有关注你的人，在列表里标 <span class="xfc-nofb" id="nofb-sample">未回关</span></small></span>
+        <input type="checkbox" role="switch" id="showNoFollowBack">
+      </label>
     </fieldset>
   </main>
 

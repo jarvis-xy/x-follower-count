@@ -114,6 +114,29 @@ async function main() {
     await page.waitForTimeout(300);
   });
 
+  const pills = () => page.evaluate(() => [...document.querySelectorAll('.xfc-nofb')].map((p) => ({
+    section: p.closest('[data-testid="UserCell"]').parentElement.id,
+    handle: p.dataset.xfcKey,
+    text: p.textContent,
+  })));
+
+  await check('未回关 tags exactly the people you follow who do not follow you', async () => {
+    assert.deepEqual(await pills(), [
+      { section: 'following', handle: 'bob_builds', text: '未回关' },
+      { section: 'following', handle: 'dan_quotes', text: '未回关' },
+    ]);
+  });
+
+  await check('未回关 sits right after the @handle, on the handle line', async () => {
+    const geo = await page.evaluate(() => [...document.querySelectorAll('.xfc-nofb')].map((p) => {
+      const cell = p.closest('[data-testid="UserCell"]');
+      const h = [...cell.querySelectorAll('span')].find((s) => s.firstChild && /^@\w+$/.test(s.firstChild.nodeValue || '')).getBoundingClientRect();
+      const r = p.getBoundingClientRect();
+      return r.left >= h.right - 0.5 && Math.abs((r.top + r.bottom) / 2 - (h.top + h.bottom) / 2) < 3;
+    }));
+    assert.deepEqual(geo, [true, true]);
+  });
+
   await page.locator('[data-testid="primaryColumn"]').screenshot({ path: join(OUT, 'mock-light.png') });
 
   await check('dark theme switches badge palette', async () => {
@@ -126,6 +149,12 @@ async function main() {
   await page.locator('[data-testid="primaryColumn"]').screenshot({ path: join(OUT, 'mock-dark.png') });
   await page.evaluate(() => document.body.classList.remove('dark'));
 
+  await check('unfollowing (data-testid flips in place) drops 未回关 at once', async () => {
+    await page.evaluate(() => window.__mock.unfollow('dan_quotes'));
+    await page.waitForTimeout(300);
+    assert.deepEqual((await pills()).map((p) => p.handle), ['bob_builds']);
+  });
+
   // ---- popup ----
   const id = extensionId();
   const popup = await ctx.newPage();
@@ -136,7 +165,8 @@ async function main() {
     await popup.reload();
     await popup.waitForFunction(() => document.getElementById('count').textContent !== '0', null, { timeout: 4000 });
     assert.equal(await popup.locator('#count').textContent(), '7');
-    assert.equal(await popup.locator('#version').textContent(), 'v1.0.0');
+    const { version } = JSON.parse(readFileSync(join(ROOT, 'extension', 'manifest.json'), 'utf8'));
+    assert.equal(await popup.locator('#version').textContent(), 'v' + version);
   });
   await popup.screenshot({ path: join(OUT, 'popup-light.png'), fullPage: true });
 
@@ -149,6 +179,7 @@ async function main() {
     assert.equal(b.alice_ai, '174.1K followers');
     assert.equal(b.frank_7, '7 followers');
     assert.equal(await popup.locator('#pv-badge').textContent(), '174.1K followers');
+    assert.deepEqual((await pills()).map((p) => p.text), ["Doesn't follow you"]);
     await popup.locator('input[name="lang"][value="zh"]').check({ force: true });
   });
 
@@ -165,25 +196,38 @@ async function main() {
   await page.locator('[data-testid="primaryColumn"]').screenshot({ path: join(OUT, 'mock-tiers.png') });
   await toggle('#tierColors');
 
+  await check('popup: 未回关 switch', async () => {
+    await toggle('#showNoFollowBack');
+    await page.waitForTimeout(400);
+    assert.equal(await page.locator('.xfc-nofb').count(), 0);
+    await toggle('#showNoFollowBack');
+    await page.waitForTimeout(400);
+    assert.deepEqual((await pills()).map((p) => p.handle), ['bob_builds']);
+  });
+
   await check('popup: hide in user lists only', async () => {
     await toggle('#showInLists');
     await page.waitForTimeout(400);
     const b = await badges();
     assert.equal(b.erin_cn, null);
-    assert.equal(b.alice_ai, '粉丝 17.4万');
+    assert.equal(b.carol_dev, '粉丝 1,574');
+    assert.deepEqual((await pills()).map((p) => p.handle), ['bob_builds'], '未回关 has its own switch');
     await toggle('#showInLists');
     await page.waitForTimeout(400);
     assert.equal((await badges()).erin_cn, '粉丝 3.5万');
   });
 
   await check('popup: master switch removes and restores everything', async () => {
+    const before = await page.locator('.xfc-badge').count();
     await toggle('#enabled');
     await page.waitForTimeout(400);
     assert.equal(await page.locator('.xfc-badge').count(), 0);
+    assert.equal(await page.locator('.xfc-nofb').count(), 0);
     assert.equal(await popup.locator('#options').evaluate((f) => f.disabled), true);
     await toggle('#enabled');
     await page.waitForTimeout(400);
-    assert.equal(await page.locator('.xfc-badge').count(), 7);
+    assert.equal(await page.locator('.xfc-badge').count(), before);
+    assert.equal(await page.locator('.xfc-nofb').count(), 1);
   });
 
   await check('persisted cache renders badges when X serves no counts', async () => {

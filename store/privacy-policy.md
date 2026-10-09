@@ -1,12 +1,14 @@
-# X 粉丝数显示 隐私政策
+# X Follower Count 隐私政策
 
 生效日期：2026 年 10 月 9 日
 
-「X 粉丝数显示」（以下简称“本扩展”）是一个 Chrome 浏览器扩展，用于在 x.com 和 twitter.com 页面的用户名旁显示该用户的粉丝数。本政策说明本扩展如何处理数据。
+「X Follower Count」（以下简称“本扩展”）是一个 Chrome 浏览器扩展，用于在 x.com 和 twitter.com 页面的用户名旁显示该用户的粉丝数。本政策说明本扩展如何处理数据。
 
 ## 本扩展读取哪些数据
 
 当你浏览 x.com 或 twitter.com 时，X 网页会自行向 X 的服务器请求时间线、用户列表等内容。本扩展在你的浏览器内读取这些请求已返回的内容，只从中提取公开的账号信息：用户名（@handle）、粉丝数和关注数。
+
+在关注者、正在关注等用户列表里，本扩展还会读取页面上已经显示的关注状态（你是否关注了对方、对方是否显示「关注了你」），只用于当场标出「未回关」，不保存，也不发送到任何地方。
 
 本扩展不读取你的密码、私信、浏览记录或其他网站的内容，也不会额外向 X 或任何其他服务器发出请求。
 
@@ -32,13 +34,13 @@
 
 ---
 
-# Privacy Policy — X 粉丝数显示 (X Follower Count)
+# Privacy Policy — X Follower Count
 
 Effective date: October 9, 2026
 
-X 粉丝数显示 ("the extension") is a Chrome extension that shows each user's follower count next to their name on x.com and twitter.com.
+X Follower Count ("the extension") is a Chrome extension that shows each user's follower count next to their name on x.com and twitter.com.
 
-**What it reads.** While you browse x.com or twitter.com, the X web app requests timelines and user lists from X's servers. The extension reads those already-returned responses inside your browser and extracts only public account information: the username (@handle), follower count and following count. It does not read passwords, direct messages, your browsing history or any other website, and it makes no network requests of its own.
+**What it reads.** While you browse x.com or twitter.com, the X web app requests timelines and user lists from X's servers. The extension reads those already-returned responses inside your browser and extracts only public account information: the username (@handle), follower count and following count. In user lists it also reads the follow status already shown on the page (whether you follow someone and whether X shows "Follows you"), only to tag people who don't follow you back; this is not stored or sent anywhere. It does not read passwords, direct messages, your browsing history or any other website, and it makes no network requests of its own.
 
 **Where data is stored.** The extracted "username → follower count, following count, time recorded" records are stored locally in your browser (chrome.storage.local, up to 10,000 entries) so counts still show after a reload. Your display settings are stored in chrome.storage.sync and may be synced across your devices by Chrome if you use Chrome Sync.
 

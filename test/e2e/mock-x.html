@@ -39,6 +39,8 @@
   <section id="timeline"></section>
   <h2>Verified Followers</h2>
   <section id="followers"></section>
+  <h2>Following</h2>
+  <section id="following"></section>
 </main>
 <script>
   const VERIFIED = '<svg class="ver" viewBox="0 0 22 22" data-testid="icon-verified" aria-label="Verified account" role="img"><path d="M20.4 11c0-1.4-.8-2.6-2-3.2.4-1.3.2-2.7-.8-3.6-1-1-2.4-1.2-3.6-.8C13.4 2.2 12.2 1.4 11 1.4S8.6 2.2 8 3.4c-1.3-.4-2.7-.2-3.6.8-1 1-1.2 2.4-.8 3.6C2.4 8.4 1.6 9.6 1.6 11s.8 2.6 2 3.2c-.4 1.3-.2 2.7.8 3.6 1 1 2.4 1.2 3.6.8.6 1.2 1.8 2 3.2 2s2.6-.8 3.2-2c1.3.4 2.7.2 3.6-.8 1-1 1.2-2.4.8-3.6 1.2-.6 2-1.8 2-3.2zm-10.6 4.5L6 11.7l1.4-1.4 2.4 2.4 5-5.2 1.5 1.3-6.5 6.7z"/></svg>';
@@ -90,7 +92,9 @@
   // Mirrors the real UserCell: avatar link inside UserAvatar-Container, the name
   // link alone in a column wrapper, handle + "Follows you" on the next line,
   // Follow button in the outer row, bio below (may contain @mentions).
-  function cellEl(user, bio) {
+  // The follow button's data-testid ends in "-unfollow" when you follow them
+  // (a div here: nested <button>s don't survive innerHTML parsing).
+  function cellEl(user, bio, { followsYou = true, following = false } = {}) {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'v cell';
@@ -111,11 +115,11 @@
               </div>
               <div class="v row shrink">
                 <div class="v shrink"><a href="/${user.handle}" role="link" tabindex="-1" class="v"><div class="v"><div dir="ltr" class="t muted"><span class="h">@${user.handle}</span></div></div></a></div>
-                <div class="v row"><div data-testid="userFollowIndicator" class="pill"><span>Follows you</span></div></div>
+                ${followsYou ? '<div class="v row"><div data-testid="userFollowIndicator" class="pill"><span>Follows you</span></div></div>' : ''}
               </div>
             </div>
           </div>
-          <div class="v"><div class="btn">Follow back</div></div>
+          <div class="v"><div role="button" class="btn" data-testid="${user.handle.length}${following ? '-unfollow' : '-follow'}"><span>${following ? 'Following' : 'Follow back'}</span></div></div>
         </div>
         <div dir="auto" class="t bio">${bio || ''}</div>
       </div>`;
@@ -145,6 +149,11 @@
     for (const t of usersIn(JSON.parse(xhr.responseText))) tl.appendChild(tweetEl(t.id, t.user, t.quoted));
     // An author whose data never arrives: must stay badge-free.
     tl.appendChild(tweetEl('99', { name: 'No Data', handle: 'henry_nodata' }));
+    // Your "Following" list: only alice follows you back.
+    const following = document.getElementById('following');
+    following.appendChild(cellEl({ name: 'Alice', handle: 'alice_ai' }, 'AI 产品经理', { following: true, followsYou: true }));
+    following.appendChild(cellEl({ name: 'Bob Builder', handle: 'bob_builds' }, '', { following: true, followsYou: false }));
+    following.appendChild(cellEl({ name: 'Dan', handle: 'dan_quotes' }, '', { following: true, followsYou: false }));
     window.__timelineReady = true;
   };
   xhr.send();
@@ -179,6 +188,13 @@
       h.replaceChildren(document.createTextNode('@' + handle));
     },
     // Translation extensions append their own nodes inside the handle span.
+    // Clicking "Following" → "Unfollow": X flips the button's data-testid in place.
+    unfollow(handle) {
+      const cell = [...document.querySelectorAll('#following [data-testid="UserCell"]')].find((c) => c.querySelector(`a[href="/${handle}"]`));
+      const btn = cell.querySelector('[data-testid$="-unfollow"]');
+      // Attribute only, no text change: proves the attribute observer alone catches it.
+      btn.setAttribute('data-testid', btn.getAttribute('data-testid').replace('-unfollow', '-follow'));
+    },
     translate(handle) {
       const span = document.querySelector(`[data-testid="UserCell"] a[href="/${handle}"] .h`);
       const extra = document.createElement('span');

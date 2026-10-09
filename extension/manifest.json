@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "X 粉丝数显示",
-  "short_name": "X 粉丝数",
-  "version": "1.0.0",
+  "name": "X Follower Count",
+  "short_name": "X Followers",
+  "version": "1.1.0",
   "description": "在 X 的时间线、粉丝列表里，直接在用户名旁显示粉丝数。数据取自 X 页面自身的请求，不调用 API，不上传任何数据。",
   "minimum_chrome_version": "111",
   "icons": {
@@ -12,7 +12,7 @@
     "128": "icons/icon128.png"
   },
   "action": {
-    "default_title": "X 粉丝数显示",
+    "default_title": "X Follower Count",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon16.png",

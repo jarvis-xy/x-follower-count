@@ -1,12 +1,29 @@
 # Chrome 应用商店上架资料
 
+## 当前状态
+
+- **2026-10-09 已提交审核**，状态「待审核」，设为审核通过后自动发布。审核可能要几天到几周，结果会发到联系邮箱
+- 商品 ID：`jgbjpabjaddkpackkbobbddjdgnlocfl`；审核通过后商店地址为 `https://chromewebstore.google.com/detail/jgbjpabjaddkpackkbobbddjdgnlocfl`
+- 开发者信息中心：<https://chrome.google.com/webstore/devconsole>，发布者「Jarvis | AI 商业实验室」
+- 提交前把商品名从「X 粉丝数显示」改成了 **X Follower Count**：manifest、弹窗标题、宣传图、隐私政策同步改了
+- 隐私政策原文在发布者 Google 账号的云端硬盘里，文档名「X Follower Count 隐私政策 / Privacy Policy」。改文档后，公开链接会自动更新
+
+**v1.1.0（新增「未回关」标记）待上传**：代码已完成，等 1.0.0 审核结果出来后再上传，审核中途换包会打断当前审核。上传时要做三件事：
+
+1. `npm run pack` 生成新包，在「文件包」上传
+2. 在「商品详情 › 说明」里加上下面「说明」中「未回关」那一行
+3. 把 `store/privacy-policy.md` 里新加的「关注状态」两段同步到隐私政策 Google 文档
+4. 可选：`npm run store:assets` 重新生成图片（弹窗里多了「关注关系」开关），替换截图 4
+
+**更新商店版本**：先把 `manifest.json` 的 `version` 调高，`npm run pack` 打包，再到「文件包 › 上传新的软件包」上传后提交审核。改了弹窗或宣传图的话，先 `npm run store:assets` 重新生成图片，再在「商品详情」里删掉旧图、上传新图。
+
 开发者信息中心里每个字段填什么。图片在 `store/out/`（`npm run store:assets` 重新生成），安装包用 `npm run pack` 生成 `dist/x-follower-count-v<版本>.zip`。
 
 ## 商品详情（Store listing）
 
 | 字段 | 填写内容 |
 | --- | --- |
-| 名称 / 摘要 | 来自 manifest：`X 粉丝数显示` / `在 X 的时间线、粉丝列表里，直接在用户名旁显示粉丝数。数据取自 X 页面自身的请求，不调用 API，不上传任何数据。` |
+| 名称 / 摘要 | 来自 manifest：`X Follower Count` / `在 X 的时间线、粉丝列表里，直接在用户名旁显示粉丝数。数据取自 X 页面自身的请求，不调用 API，不上传任何数据。` |
 | 类别 | 生活时尚 › 社交网络（Social Networking） |
 | 语言 | 中文（简体） |
 | 商店图标 | `store/out/icon128.png` |
@@ -24,6 +41,7 @@ X 只在个人主页和悬停卡片里显示粉丝数，刷时间线、翻粉丝
 • 刷时间线时，一眼看出发言的人有多少粉丝，引用推文和推荐关注里也有
 • 翻「认证关注者」「关注者」列表时，看出哪些有影响力的人关注了你
 • 翻别人的「正在关注」列表找值得关注的账号时，多一个参考
+• 翻自己的「正在关注」列表时，没回关你的人会标上红色「未回关」
 
 功能
 • 数字格式可选：中文「粉丝 17.4万」或英文「17.4K followers」

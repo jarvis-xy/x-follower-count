@@ -1,7 +1,15 @@
 'use strict';
 
 // Keep in sync with DEFAULTS in src/content.js.
-const DEFAULTS = { enabled: true, showInTweets: true, showInLists: true, lang: 'zh', tierColors: false };
+const DEFAULTS = {
+  enabled: true,
+  showInTweets: true,
+  showInLists: true,
+  lang: 'zh',
+  tierColors: false,
+  showNoFollowBack: true,
+};
+const SWITCHES = ['enabled', 'showInTweets', 'showInLists', 'tierColors', 'showNoFollowBack'];
 const CACHE_KEY = 'xfcCache';
 const SAMPLE_FOLLOWERS = 174123;
 const F = globalThis.XFCFormat;
@@ -20,11 +28,12 @@ function renderPreview() {
   badge.textContent = F.label(SAMPLE_FOLLOWERS, settings.lang);
   badge.className = settings.tierColors ? 'xfc-badge xfc-tier-' + F.tier(SAMPLE_FOLLOWERS) : 'xfc-badge';
   $('legend').hidden = !settings.tierColors;
+  $('nofb-sample').textContent = settings.lang === 'en' ? "Doesn't follow you" : '未回关';
   $('options').disabled = !settings.enabled;
 }
 
 function renderControls() {
-  for (const id of ['enabled', 'showInTweets', 'showInLists', 'tierColors']) $(id).checked = !!settings[id];
+  for (const id of SWITCHES) $(id).checked = !!settings[id];
   for (const r of document.querySelectorAll('input[name="lang"]')) r.checked = r.value === settings.lang;
   renderPreview();
 }
@@ -44,10 +53,11 @@ async function init() {
   $('version').textContent = 'v' + chrome.runtime.getManifest().version;
   settings = { ...DEFAULTS, ...(await chrome.storage.sync.get(DEFAULTS)) };
   renderControls();
-  requestAnimationFrame(() => document.body.classList.add('ready'));
+  // Two frames: the saved state must paint before transitions are enabled.
+  requestAnimationFrame(() => requestAnimationFrame(() => document.body.classList.add('ready')));
   refreshCount();
 
-  for (const id of ['enabled', 'showInTweets', 'showInLists', 'tierColors']) {
+  for (const id of SWITCHES) {
     $(id).addEventListener('change', (e) => save({ [id]: e.target.checked }));
   }
   for (const r of document.querySelectorAll('input[name="lang"]')) {
