@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>store scene</title>
+<style>
+  /* 1280x800 Chrome Web Store screenshot. The X-like markup inside the window
+     keeps x.com's structure (User-Name / UserCell / [dir] text blocks) so the
+     real extension renders the badges. Served at https://x.com/__store/... */
+  :root {
+    --fg: #0f1419; --muted: #536471; --line: #eff3f4; --page: #fff; --card: #f7f9f9; --blue: #1d9bf0;
+    --canvas: linear-gradient(160deg, #e8f5fe 0%, #f7f9f9 55%, #eef3ff 100%);
+    --cap: #0f1419; --cap-sub: #536471;
+  }
+  body.dark {
+    --fg: #e7e9ea; --muted: #71767b; --line: #2f3336; --page: #000; --card: #16181c;
+    --canvas: linear-gradient(160deg, #0b1a2a 0%, #05080c 60%, #10142a 100%);
+    --cap: #f7f9f9; --cap-sub: #8b98a5;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { width: 1280px; height: 800px; overflow: hidden; background: var(--canvas); color: var(--fg);
+    font: 15px/20px -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif; }
+
+  .caption { position: absolute; left: 72px; top: 50px; right: 72px; }
+  .caption h1 { margin: 0; font-size: 36px; line-height: 46px; font-weight: 800; letter-spacing: -0.3px; color: var(--cap); }
+  .caption p { margin: 10px 0 0; font-size: 19px; line-height: 28px; color: var(--cap-sub); display: flex; align-items: center; gap: 8px; }
+  .caption .xfc-badge { height: 24px; font-size: 14px; line-height: 24px; padding: 0 9px; margin: 0; font-family: inherit; }
+
+  .window { position: absolute; left: 72px; top: 178px; width: 1136px; height: 700px; border-radius: 14px; overflow: hidden;
+    background: var(--page); box-shadow: 0 24px 60px rgba(15, 20, 25, 0.18), 0 0 0 1px rgba(15, 20, 25, 0.06); }
+  body.dark .window { box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08); }
+  .bar { height: 46px; display: flex; align-items: center; gap: 14px; padding: 0 16px; background: #f1f3f4; border-bottom: 1px solid #e3e5e8; }
+  body.dark .bar { background: #202124; border-color: #2f3133; }
+  .lights { display: flex; gap: 8px; }
+  .lights i { width: 12px; height: 12px; border-radius: 50%; background: #ff5f57; }
+  .lights i:nth-child(2) { background: #febc2e; } .lights i:nth-child(3) { background: #28c840; }
+  .url { flex: 1; height: 30px; border-radius: 15px; background: #fff; color: #3c4043; font-size: 14px; line-height: 30px; padding: 0 16px; }
+  body.dark .url { background: #35363a; color: #e8eaed; }
+  .ext { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; }
+  .ext img { width: 18px; height: 18px; }
+  .ext.on { background: rgba(29, 155, 240, 0.16); }
+
+  .app { display: flex; height: calc(100% - 46px); padding-left: 36px; }
+  .nav { width: 72px; display: flex; flex-direction: column; align-items: center; gap: 22px; padding-top: 18px; }
+  .nav svg { width: 26px; height: 26px; fill: none; stroke: var(--fg); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+  .col { width: 600px; border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+  .side { width: 396px; padding: 12px 0 0 24px; }
+
+  .tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .tabs div { flex: 1; text-align: center; padding: 16px 0 0; color: var(--muted); font-weight: 500; }
+  .tabs div span { display: inline-block; padding-bottom: 14px; }
+  .tabs div.on { color: var(--fg); font-weight: 700; }
+  .tabs div.on span { box-shadow: inset 0 -4px 0 var(--blue); border-radius: 0 0 2px 2px; }
+  .phead { display: flex; align-items: center; gap: 28px; padding: 6px 16px; height: 56px; }
+  .phead b { font-size: 19px; line-height: 24px; display: block; }
+  .phead small { color: var(--muted); font-size: 13px; }
+
+  /* react-native-web style views */
+  .v { display: flex; flex-direction: column; align-items: stretch; min-width: 0; min-height: 0; position: relative; }
+  .row { flex-direction: row; align-items: center; }
+  .shrink { flex-shrink: 1; max-width: 100%; }
+  .grow { flex-grow: 1; }
+  .t { display: block; white-space: nowrap; }
+  .name { font-weight: 700; overflow: hidden; text-overflow: ellipsis; }
+  .ns { flex-shrink: 0; display: flex; }
+  .muted { color: var(--muted); }
+  a { color: inherit; text-decoration: none; }
+  .ver { width: 18px; height: 18px; margin-left: 2px; fill: var(--blue); }
+
+  article { display: flex; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 16px; }
+  .body { flex: 1; min-width: 0; }
+  .hdr { display: flex; align-items: center; justify-content: space-between; }
+  .dots { color: var(--muted); letter-spacing: 1px; }
+  .text { white-space: pre-wrap; margin-top: 2px; }
+  .quote { margin-top: 10px; border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; }
+  body:not(.dark) .quote { border-color: #cfd9de; }
+  .quote .avatar { width: 20px; height: 20px; font-size: 10px; margin-right: 6px; }
+  .quote .qh { display: flex; align-items: center; }
+  .actions { display: flex; justify-content: space-between; margin-top: 10px; max-width: 470px; color: var(--muted); font-size: 13px; }
+  .actions span { display: inline-flex; align-items: center; gap: 6px; }
+  .actions svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+  .cell { width: 100%; display: flex; gap: 10px; padding: 12px 16px; background: none; border: 0; text-align: left; font: inherit; color: inherit; }
+  .cell + .cell { border-top: 0; }
+  .btn { background: var(--fg); color: var(--page); border-radius: 999px; padding: 0 16px; height: 32px; line-height: 32px; font-weight: 700; font-size: 14px; flex: none; }
+  .pill { font-size: 12px; line-height: 16px; padding: 0 4px; border-radius: 4px; background: var(--line); color: var(--muted); margin-left: 4px; }
+  .bio { white-space: normal; margin-top: 2px; }
+
+  .search { height: 42px; border-radius: 21px; background: var(--card); color: var(--muted); line-height: 42px; padding: 0 20px; border: 1px solid var(--line); }
+  .box { margin-top: 16px; border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+  .box h3 { margin: 0; padding: 12px 16px 4px; font-size: 20px; line-height: 28px; font-weight: 800; }
+
+  .popup { position: absolute; right: 18px; top: 52px; border-radius: 10px; overflow: hidden;
+    box-shadow: 0 12px 40px rgba(15, 20, 25, 0.28), 0 0 0 1px rgba(15, 20, 25, 0.1); }
+  .popup img { display: block; width: 340px; }
+  .dim::after { content: ""; position: absolute; inset: 46px 0 0 0; background: rgba(255, 255, 255, 0.35); pointer-events: none; }
+</style>
+</head>
+<body>
+<div class="caption"><h1 id="h1"></h1><p id="sub"></p></div>
+<div class="window" id="win">
+  <div class="bar">
+    <div class="lights"><i></i><i></i><i></i></div>
+    <div class="url" id="url">x.com/home</div>
+    <div class="ext" id="ext"><img src="/__store/icon32.png" alt=""></div>
+  </div>
+  <div class="app">
+    <nav class="nav" id="nav"></nav>
+    <main class="col" id="col"></main>
+    <aside class="side" id="side"></aside>
+  </div>
+</div>
+<script>
+const scene = new URLSearchParams(location.search).get('s') || 'timeline';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const VER = '<svg class="ver" viewBox="0 0 22 22"><path d="M20.4 11c0-1.4-.8-2.6-2-3.2.4-1.3.2-2.7-.8-3.6-1-1-2.4-1.2-3.6-.8C13.4 2.2 12.2 1.4 11 1.4S8.6 2.2 8 3.4c-1.3-.4-2.7-.2-3.6.8-1 1-1.2 2.4-.8 3.6C2.4 8.4 1.6 9.6 1.6 11s.8 2.6 2 3.2c-.4 1.3-.2 2.7.8 3.6 1 1 2.4 1.2 3.6.8.6 1.2 1.8 2 3.2 2s2.6-.8 3.2-2c1.3.4 2.7.2 3.6-.8 1-1 1.2-2.4.8-3.6 1.2-.6 2-1.8 2-3.2zm-10.6 4.5L6 11.7l1.4-1.4 2.4 2.4 5-5.2 1.5 1.3-6.5 6.7z"/></svg>';
+const ICON = {
+  home: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  bell: '<path d="M6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  more: '<circle cx="12" cy="12" r="9"/><path d="M8 12h.01M12 12h.01M16 12h.01"/>',
+  reply: '<path d="M4 12a8 7 0 0 1 8-7h0a8 7 0 0 1 0 14H9l-4 3v-4.5A7 7 0 0 1 4 12z"/>',
+  rt: '<path d="M7 7h9a3 3 0 0 1 3 3v6"/><path d="m16 13 3 3 3-3"/><path d="M17 17H8a3 3 0 0 1-3-3V8"/><path d="M8 11 5 8 2 11"/>',
+  like: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  views: '<path d="M5 20V12M10 20V6M15 20v-9M20 20V9"/>',
+};
+const svg = (k) => `<svg viewBox="0 0 24 24">${ICON[k]}</svg>`;
+
+const CAPTIONS = {
+  timeline: ['刷时间线，一眼看到每个人的粉丝数', '粉丝数直接显示在用户名旁，引用推文和推荐关注里也有'],
+  followers: ['看看哪些有影响力的人关注了你', '认证关注者、关注者、正在关注列表里同样显示'],
+  dark: ['按粉丝量级着色，深色模式一样清晰', '<span class="xfc-badge xfc-tier-1">&lt; 1千</span><span class="xfc-badge xfc-tier-2">1千+</span><span class="xfc-badge xfc-tier-3">1万+</span><span class="xfc-badge xfc-tier-4">10万+</span>'],
+  settings: ['按你的习惯调整显示方式', '中文「粉丝 17.4万」或英文「17.4K followers」，时间线和用户列表可分别开关'],
+};
+
+function avatar(u, d) {
+  return `<div class="avatar" style="background: linear-gradient(135deg, ${d.c[0]}, ${d.c[1]})">${esc([...d.name][0])}</div>`;
+}
+
+// Same structure as x.com's tweet header.
+function header(h, d, time, linked = true) {
+  const A = linked ? (x) => `<a href="/${h}" role="link" ${x || ''} class="v shrink">` : () => '<div class="v shrink">';
+  const Z = linked ? '</a>' : '</div>';
+  return `<div class="v row shrink" data-testid="User-Name">
+    <div class="v row shrink"><div class="v shrink">${A()}<div class="v row shrink">
+      <div dir="ltr" class="t name"><span><span>${esc(d.name)}</span></span></div>
+      <div dir="ltr" class="t ns"><span>${VER}</span></div>
+    </div>${Z}</div></div>
+    <div class="v row shrink"><div class="v row shrink">
+      <div class="v shrink">${A('tabindex="-1"')}<div dir="ltr" class="t muted"><span>@${h}</span></div>${Z}</div>
+      <div dir="ltr" aria-hidden="true" class="t muted"><span>&nbsp;·&nbsp;</span></div>
+      <div class="v row"><span class="t muted"><time>${esc(time)}</time></span></div>
+    </div></div>
+  </div>`;
+}
+
+// Same structure as x.com's UserCell.
+function cell(h, d, { button = '关注', followsYou = false, bio = true } = {}) {
+  return `<button type="button" class="cell" data-testid="UserCell">
+    <div class="v"><div class="v" data-testid="UserAvatar-Container-${h}"><a href="/${h}" tabindex="-1" class="v">${avatar(h, d)}</a></div></div>
+    <div class="v grow">
+      <div class="v row" style="justify-content: space-between; gap: 12px">
+        <div class="v shrink"><div class="v shrink">
+          <div class="v shrink"><a href="/${h}" role="link" class="v shrink"><div class="v row shrink">
+            <div dir="ltr" class="t name"><span><span>${esc(d.name)}</span></span></div>
+            <div dir="ltr" class="t ns"><span>${VER}</span></div>
+          </div></a></div>
+          <div class="v row shrink">
+            <div class="v shrink"><a href="/${h}" role="link" tabindex="-1" class="v"><div class="v"><div dir="ltr" class="t muted"><span>@${h}</span></div></div></a></div>
+            ${followsYou ? '<div class="v row"><div data-testid="userFollowIndicator" class="pill"><span>关注了你</span></div></div>' : ''}
+          </div>
+        </div></div>
+        <div class="btn">${button}</div>
+      </div>
+      ${bio && d.bio ? `<div dir="auto" class="t bio">${esc(d.bio)}</div>` : ''}
+    </div>
+  </button>`;
+}
+
+function tweet(t, U) {
+  const d = U[t.by];
+  const q = t.quote && `<div class="quote"><div class="qh">${avatar(t.quote.by, U[t.quote.by])}${header(t.quote.by, U[t.quote.by], t.quote.time, false)}</div><div class="text">${esc(t.quote.text)}</div></div>`;
+  const [r, rt, l, v] = t.stats;
+  return `<article>${avatar(t.by, d)}<div class="body">
+    <div class="hdr">${header(t.by, d, t.time)}<span class="dots">···</span></div>
+    <div dir="auto" class="text">${esc(t.text)}</div>
+    ${q || ''}
+    <div class="actions"><span>${svg('reply')}${r}</span><span>${svg('rt')}${rt}</span><span>${svg('like')}${l}</span><span>${svg('views')}${v}</span></div>
+  </div></article>`;
+}
+
+(async () => {
+  const D = await (await fetch('/__store/data.json')).json();
+  const U = D.users;
+  if (scene === 'dark') document.body.classList.add('dark');
+  const [h1, sub] = CAPTIONS[scene];
+  document.getElementById('h1').textContent = h1;
+  document.getElementById('sub').innerHTML = sub;
+  document.getElementById('nav').innerHTML = ['home', 'search', 'bell', 'mail', 'user', 'more'].map(svg).join('');
+
+  const col = document.getElementById('col');
+  const side = document.getElementById('side');
+  side.innerHTML = `<div class="search">搜索</div><div class="box"><h3>推荐关注</h3>${D.suggested.map((h) => cell(h, U[h], { bio: false })).join('')}</div>`;
+
+  if (scene === 'followers') {
+    document.getElementById('url').textContent = `x.com/${D.me}/verified_followers`;
+    col.innerHTML = `<div class="phead"><span style="font-size:20px">←</span><div><b>${esc(U[D.me].name)}</b><small>@${D.me}</small></div></div>
+      <div class="tabs"><div class="on"><span>认证关注者</span></div><div><span>关注者</span></div><div><span>正在关注</span></div></div>
+      ${D.followers.map((h) => cell(h, U[h], { button: '回关', followsYou: true })).join('')}`;
+  } else {
+    col.innerHTML = `<div class="tabs"><div class="on"><span>为你推荐</span></div><div><span>正在关注</span></div></div>${D.timeline.map((t) => tweet(t, U)).join('')}`;
+  }
+
+  if (scene === 'settings') {
+    document.getElementById('ext').classList.add('on');
+    const pop = document.createElement('div');
+    pop.className = 'popup';
+    pop.innerHTML = '<img src="/__store/popup.png" alt="">';
+    document.getElementById('win').appendChild(pop);
+    await pop.querySelector('img').decode();
+  }
+
+  // Like x.com: the page's own API call carries the follower counts.
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', '/i/api/graphql/store/Users');
+  xhr.onload = () => { window.__sceneReady = true; };
+  xhr.send();
+})();
+</script>
+</body>
+</html>

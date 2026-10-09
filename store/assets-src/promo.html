@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>promo tile</title>
+<style>
+  /* ?size=small → 440x280 (required), ?size=marquee → 1400x560 (optional) */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif;
+    background: radial-gradient(120% 140% at 0% 0%, #4cb7ff 0%, #1d9bf0 45%, #0b6fc0 100%); color: #fff; position: relative; }
+  .glow { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, 0.12); }
+  .icon { position: absolute; border-radius: 22%; background: #fff; box-shadow: 0 10px 30px rgba(6, 50, 90, 0.3); display: grid; place-items: center; }
+  .icon svg { width: 72%; height: 72%; }
+  .card { position: absolute; background: #fff; color: #0f1419; border-radius: 16px; box-shadow: 0 14px 40px rgba(6, 50, 90, 0.28);
+    display: flex; align-items: center; white-space: nowrap; }
+  .card .av { border-radius: 50%; flex: none; }
+  .card b { font-weight: 700; }
+  .card .ver { fill: #1d9bf0; flex: none; }
+  .badge { color: #1a8cd8; background: rgba(29, 155, 240, 0.12); border-radius: 6px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .handle { color: #536471; }
+  h1 { position: absolute; margin: 0; font-weight: 800; letter-spacing: -0.5px; }
+  p.sub { position: absolute; margin: 0; color: rgba(255, 255, 255, 0.88); }
+
+  /* small 440x280 */
+  .small { width: 440px; height: 280px; }
+  .small .icon { left: 34px; top: 34px; width: 72px; height: 72px; }
+  .small .card { left: 34px; height: 46px; padding: 0 14px 0 10px; gap: 7px; font-size: 15px; }
+  .small .card .av { width: 26px; height: 26px; }
+  .small .card .ver { width: 16px; height: 16px; }
+  .small .badge { font-size: 13px; padding: 2px 7px; }
+  .small h1 { left: 124px; top: 44px; font-size: 26px; line-height: 32px; }
+  .small p.sub { left: 124px; top: 78px; font-size: 13px; }
+
+  /* marquee 1400x560 */
+  .marquee { width: 1400px; height: 560px; }
+  .marquee .icon { left: 110px; top: 150px; width: 110px; height: 110px; }
+  .marquee h1 { left: 110px; top: 290px; font-size: 64px; line-height: 76px; }
+  .marquee p.sub { left: 114px; top: 380px; font-size: 26px; }
+  .marquee .card { height: 86px; padding: 0 28px 0 20px; gap: 12px; font-size: 26px; border-radius: 22px; }
+  .marquee .card .av { width: 50px; height: 50px; }
+  .marquee .card .ver { width: 28px; height: 28px; }
+  .marquee .badge { font-size: 22px; padding: 4px 12px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<script>
+const size = new URLSearchParams(location.search).get('size') || 'small';
+document.body.className = size;
+const GLYPH = '<svg viewBox="0 0 100 100"><g fill="#1d9bf0"><circle cx="40" cy="35" r="13"/><path d="M16 79a24 22 0 0 1 48 0z"/><rect x="66" y="60" width="6.5" height="16" rx="3.25"/><rect x="76" y="50" width="6.5" height="26" rx="3.25"/><rect x="86" y="38" width="6.5" height="38" rx="3.25"/></g></svg>';
+const VER = '<svg class="ver" viewBox="0 0 22 22"><path d="M20.4 11c0-1.4-.8-2.6-2-3.2.4-1.3.2-2.7-.8-3.6-1-1-2.4-1.2-3.6-.8C13.4 2.2 12.2 1.4 11 1.4S8.6 2.2 8 3.4c-1.3-.4-2.7-.2-3.6.8-1 1-1.2 2.4-.8 3.6C2.4 8.4 1.6 9.6 1.6 11s.8 2.6 2 3.2c-.4 1.3-.2 2.7.8 3.6 1 1 2.4 1.2 3.6.8.6 1.2 1.8 2 3.2 2s2.6-.8 3.2-2c1.3.4 2.7.2 3.6-.8 1-1 1.2-2.4.8-3.6 1.2-.6 2-1.8 2-3.2zm-10.6 4.5L6 11.7l1.4-1.4 2.4 2.4 5-5.2 1.5 1.3-6.5 6.7z"/></svg>';
+const card = (name, badge, c, handle, style) =>
+  `<div class="card" style="${style}"><div class="av" style="background:linear-gradient(135deg,${c[0]},${c[1]})"></div><b>${name}</b>${VER}<span class="badge">${badge}</span>${handle ? `<span class="handle">${handle}</span>` : ''}</div>`;
+
+let html = `<div class="icon">${GLYPH}</div>`;
+if (size === 'small') {
+  html += `<div class="glow" style="width:260px;height:260px;right:-70px;top:-90px"></div>
+    <h1>X 粉丝数显示</h1><p class="sub">在用户名旁直接看到粉丝数</p>
+    ${card('林小夕', '粉丝 17.4万', ['#ffb88c', '#de6262'], '', 'top:134px')}
+    ${card('老周聊出海', '粉丝 120.6万', ['#f6d365', '#fda085'], '', 'top:192px; left:118px')}`;
+} else {
+  html += `<div class="glow" style="width:620px;height:620px;right:-120px;top:-200px"></div>
+    <div class="glow" style="width:300px;height:300px;right:420px;bottom:-190px"></div>
+    <h1>X 粉丝数显示</h1><p class="sub">在用户名旁直接看到每个人的粉丝数</p>
+    ${card('林小夕', '粉丝 17.4万', ['#ffb88c', '#de6262'], '@linxiaoxi_ai', 'left:720px; top:112px')}
+    ${card('Mia Chen', '粉丝 5.6万', ['#fbc2eb', '#a66cff'], '@miachen_vc', 'left:790px; top:232px')}
+    ${card('晚安星球', '粉丝 7,806', ['#667eea', '#764ba2'], '@goodnight_star', 'left:700px; top:352px')}`;
+}
+document.body.insertAdjacentHTML('beforeend', html);
+</script>
+</body>
+</html>

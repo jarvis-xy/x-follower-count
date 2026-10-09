@@ -1,0 +1,22 @@
+{
+  "name": "x-follower-count",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome 插件：在 X 用户名旁显示粉丝数（开发与测试工具，插件本体在 extension/）",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jarvis-xy/x-follower-count.git"
+  },
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "test:e2e": "node test/e2e/run.mjs",
+    "icons": "python3 scripts/make-icons.py",
+    "pack": "sh scripts/pack.sh",
+    "store:assets": "node scripts/store-assets.mjs"
+  },
+  "devDependencies": {
+    "playwright-core": "1.64.0"
+  }
+}

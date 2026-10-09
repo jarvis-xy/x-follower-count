@@ -1,0 +1,26 @@
+{
+  "users": {
+    "linxiaoxi_ai": { "name": "林小夕", "f": 174300, "g": 812, "c": ["#ffb88c", "#de6262"], "bio": "AI 产品经理｜每天拆解一个 AI 产品" },
+    "kevinzhou_dev": { "name": "Kevin Zhou", "f": 23800, "g": 420, "c": ["#a1c4fd", "#4f7cff"], "bio": "全栈开发｜用 AI 写代码的第三年" },
+    "miachen_vc": { "name": "Mia Chen", "f": 56700, "g": 300, "c": ["#fbc2eb", "#a66cff"], "bio": "早期投资人｜关注 AI 应用层" },
+    "laozhou_global": { "name": "老周聊出海", "f": 1206000, "g": 95, "c": ["#f6d365", "#fda085"], "bio": "十年跨境老兵｜出海实战笔记" },
+    "ajie_indie": { "name": "阿杰在做独立开发", "f": 3412, "g": 640, "c": ["#84fab0", "#3fb984"], "bio": "前大厂工程师，现在一个人做产品" },
+    "data_prince": { "name": "数据小王子", "f": 298000, "g": 210, "c": ["#30cfd0", "#330867"], "bio": "用数据讲商业故事" },
+    "amu_codes": { "name": "程序员阿木", "f": 41200, "g": 388, "c": ["#e0c3fc", "#8ec5fc"], "bio": "写代码，也写字" },
+    "ethanwu_build": { "name": "Ethan Wu", "f": 12450, "g": 530, "c": ["#ff9a9e", "#f6416c"], "bio": "Building in public · AI agents" },
+    "goodnight_star": { "name": "晚安星球", "f": 7806, "g": 1200, "c": ["#667eea", "#764ba2"], "bio": "二级市场观察｜慢就是快，永远敬畏市场" },
+    "design_meow": { "name": "一只设计喵", "f": 189, "g": 260, "c": ["#fddb92", "#d1fdff"], "bio": "UI 设计师｜分享好看的界面" },
+    "leo_startup": { "name": "创业者 Leo", "f": 15300, "g": 700, "c": ["#43e97b", "#38f9d7"], "bio": "连续创业者｜硬件出海｜每日创始人笔记" },
+    "xiaolu_prompt": { "name": "小鹿学 Prompt", "f": 642, "g": 330, "c": ["#fa709a", "#fee140"], "bio": "AIGC Builder｜分享喜爱" },
+    "xiaobai_pm": { "name": "小白做产品", "f": 2380, "g": 410, "c": ["#4facfe", "#00f2fe"], "bio": "" }
+  },
+  "timeline": [
+    { "by": "linxiaoxi_ai", "time": "2小时", "text": "拆了 30 个 AI 产品之后，我最大的感受是：真正留住用户的不是模型，而是工作流。\n\n今天聊聊三个被低估的细节 👇", "stats": ["128", "46", "1,032", "9.8万"] },
+    { "by": "kevinzhou_dev", "time": "5小时", "text": "周末用 AI 写了个小工具，从想法到上线 3 小时。独立开发的门槛，真的被拉低了。", "quote": { "by": "miachen_vc", "time": "1天", "text": "问了 30 位创始人：如果只能留一个 AI 工具，你选哪个？结果出乎意料。" }, "stats": ["37", "12", "286", "2.1万"] },
+    { "by": "laozhou_global", "time": "8小时", "text": "出海第一年踩过的坑：别急着做多语言，先把一个市场做透。", "stats": ["215", "380", "3,410", "41万"] },
+    { "by": "ajie_indie", "time": "26分钟", "text": "第一个付费用户来了！虽然只有 $9，但这感觉比发工资还开心 🎉", "stats": ["18", "3", "97", "4,120"] }
+  ],
+  "suggested": ["data_prince", "amu_codes", "ethanwu_build"],
+  "followers": ["laozhou_global", "linxiaoxi_ai", "goodnight_star", "leo_startup", "xiaolu_prompt", "design_meow", "ajie_indie"],
+  "me": "xiaobai_pm"
+}

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>X 粉丝数显示</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="../src/content.css">
+</head>
+<body>
+  <header class="head">
+    <img class="logo" src="../icons/icon48.png" alt="" width="32" height="32">
+    <div class="head-text">
+      <h1>X 粉丝数显示</h1>
+      <p>在用户名旁直接看到粉丝数</p>
+    </div>
+    <span class="version" id="version"></span>
+  </header>
+
+  <section class="preview" aria-label="效果预览">
+    <div class="avatar" aria-hidden="true"></div>
+    <div class="preview-line">
+      <span class="pv-name">林小夕</span>
+      <svg class="pv-check" viewBox="0 0 22 22" aria-hidden="true"><path d="M20.4 11c0-1.4-.8-2.6-2-3.2.4-1.3.2-2.7-.8-3.6-1-1-2.4-1.2-3.6-.8C13.4 2.2 12.2 1.4 11 1.4S8.6 2.2 8 3.4c-1.3-.4-2.7-.2-3.6.8-1 1-1.2 2.4-.8 3.6C2.4 8.4 1.6 9.6 1.6 11s.8 2.6 2 3.2c-.4 1.3-.2 2.7.8 3.6 1 1 2.4 1.2 3.6.8.6 1.2 1.8 2 3.2 2s2.6-.8 3.2-2c1.3.4 2.7.2 3.6-.8 1-1 1.2-2.4.8-3.6 1.2-.6 2-1.8 2-3.2zm-10.6 4.5L6 11.7l1.4-1.4 2.4 2.4 5-5.2 1.5 1.3-6.5 6.7z"/></svg>
+      <span class="xfc-badge" id="pv-badge">粉丝 17.4万</span>
+      <span class="pv-handle">@linxiaoxi_ai · 2小时</span>
+    </div>
+  </section>
+
+  <main>
+    <label class="row master">
+      <span class="row-label">启用插件</span>
+      <input type="checkbox" role="switch" id="enabled">
+    </label>
+
+    <fieldset id="options">
+      <div class="group-title">显示位置</div>
+      <label class="row">
+        <span class="row-label">时间线推文<small>推文作者、引用推文</small></span>
+        <input type="checkbox" role="switch" id="showInTweets">
+      </label>
+      <label class="row">
+        <span class="row-label">用户列表<small>粉丝、关注、推荐关注、搜索用户</small></span>
+        <input type="checkbox" role="switch" id="showInLists">
+      </label>
+
+      <div class="group-title">显示样式</div>
+      <div class="row">
+        <span class="row-label">数字格式</span>
+        <div class="seg" role="radiogroup" aria-label="数字格式">
+          <label><input type="radio" name="lang" value="zh"><span>粉丝 1.2万</span></label>
+          <label><input type="radio" name="lang" value="en"><span>12K followers</span></label>
+        </div>
+      </div>
+      <label class="row">
+        <span class="row-label">按粉丝量级着色</span>
+        <input type="checkbox" role="switch" id="tierColors">
+      </label>
+      <div class="legend" id="legend" aria-label="颜色图例">
+        <span class="xfc-badge xfc-tier-1">&lt; 1千</span>
+        <span class="xfc-badge xfc-tier-2">1千+</span>
+        <span class="xfc-badge xfc-tier-3">1万+</span>
+        <span class="xfc-badge xfc-tier-4">10万+</span>
+      </div>
+    </fieldset>
+  </main>
+
+  <footer>
+    <div class="stats">
+      <span>已记录 <b id="count">0</b> 个账号</span>
+      <button type="button" id="clear">清空记录</button>
+    </div>
+    <p class="note">粉丝数取自 X 页面自身的请求，不调用 API，不上传任何数据，只保存在本机。</p>
+  </footer>
+
+  <script src="../src/format.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

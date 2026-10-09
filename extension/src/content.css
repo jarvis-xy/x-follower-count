@@ -1,0 +1,35 @@
+.xfc-badge {
+  --xfc-fg: #1a8cd8;
+  --xfc-bg: rgba(29, 155, 240, 0.12);
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  height: 18px;
+  margin: 0 4px;
+  padding: 0 6px;
+  border-radius: 4px;
+  color: var(--xfc-fg);
+  background: var(--xfc-bg);
+  font: 500 12px/18px TwitterChirp, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: default;
+  user-select: none;
+}
+
+.xfc-badge.xfc-tier-1 { --xfc-fg: #536471; --xfc-bg: rgba(83, 100, 113, 0.12); }
+.xfc-badge.xfc-tier-2 { --xfc-fg: #1a8cd8; --xfc-bg: rgba(29, 155, 240, 0.12); }
+.xfc-badge.xfc-tier-3 { --xfc-fg: #6a4be8; --xfc-bg: rgba(120, 86, 255, 0.12); }
+.xfc-badge.xfc-tier-4 { --xfc-fg: #d4600a; --xfc-bg: rgba(255, 122, 0, 0.14); }
+
+/* X "Dim" and "Lights out" themes */
+html[data-xfc-theme="dark"] .xfc-badge { --xfc-fg: #1d9bf0; --xfc-bg: rgba(29, 155, 240, 0.18); }
+html[data-xfc-theme="dark"] .xfc-badge.xfc-tier-1 { --xfc-fg: #8b98a5; --xfc-bg: rgba(139, 152, 165, 0.16); }
+html[data-xfc-theme="dark"] .xfc-badge.xfc-tier-2 { --xfc-fg: #1d9bf0; --xfc-bg: rgba(29, 155, 240, 0.18); }
+html[data-xfc-theme="dark"] .xfc-badge.xfc-tier-3 { --xfc-fg: #a08cff; --xfc-bg: rgba(120, 86, 255, 0.2); }
+html[data-xfc-theme="dark"] .xfc-badge.xfc-tier-4 { --xfc-fg: #ff9a3d; --xfc-bg: rgba(255, 122, 0, 0.18); }
